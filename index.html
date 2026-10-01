@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Nimbus AI Operations Platform</title>
+<style>
+body{margin:0;font-family:Inter;background:#050b16;color:#eaf2ff}
+header{padding:20px;background:#0d1b2e;font-size:24px;font-weight:bold}
+.container{padding:20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:#0f1f36;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+h3{margin-bottom:10px}
+.metric{font-size:28px;color:#4df7d4}
+.bar{height:18px;background:#1c2e4a;border-radius:10px;overflow:hidden}
+.fill{height:100%;background:#4df7d4;width:70%}
+.table div{display:flex;justify-content:space-between;margin:5px 0;font-size:13px}
+.ai-box{margin-top:20px}
+textarea{width:100%;height:100px;background:#0a1628;color:white;border:1px solid #23344d;border-radius:8px;padding:10px}
+button{margin-top:10px;padding:10px 15px;border:none;border-radius:6px;background:#4df7d4;color:#042;font-weight:bold;cursor:pointer}
+.log{max-height:200px;overflow:auto;font-size:12px;margin-top:10px}
+.mcp{margin-top:10px;font-size:11px;color:#9fb0c9}
+</style>
+</head>
+<body>
+
+<header>Nimbus AI Operations Platform</header>
+
+<div class="container">
+
+<div class="grid">
+
+<div class="card">
+<h3>Inventory</h3>
+<div class="table" id="inventory"></div>
+<div class="mcp">MCP: Inventory Service</div>
+</div>
+
+<div class="card">
+<h3>Demand</h3>
+<div class="table" id="demand"></div>
+<div class="mcp">MCP: Needs Service</div>
+</div>
+
+<div class="card">
+<h3>Warehouse Usage</h3>
+<div class="bar"><div id="fill" class="fill"></div></div>
+<p id="usage"></p>
+<div class="mcp">MCP: Storage Monitor</div>
+</div>
+
+<div class="card">
+<h3>Offers</h3>
+<div id="offers"></div>
+<div class="mcp">MCP: Donor Intake</div>
+</div>
+
+<div class="card">
+<h3>Net Need</h3>
+<p id="net"></p>
+<div class="mcp">Rule Engine</div>
+</div>
+
+<div class="card">
+<h3>Decision</h3>
+<p id="decision"></p>
+<button onclick="approve()">Approve</button>
+<button onclick="redirect()">Redirect</button>
+<button onclick="decline()">Decline</button>
+<div class="mcp">Decision Agent</div>
+</div>
+
+</div>
+
+<div class="ai-box card">
+<h3>AI Input</h3>
+<textarea id="input">We can provide 500 hygiene kits today</textarea>
+<button onclick="analyze()">Analyze</button>
+</div>
+
+<div class="card">
+<h3>Audit Log</h3>
+<div id="log" class="log"></div>
+<div class="mcp">MCP: Audit Logs</div>
+</div>
+
+</div>
+
+<script>
+let data={
+inventory:{kits:120},
+demand:{kits:500},
+offers:[],
+usage:70
+};
+
+function render(){
+document.getElementById("inventory").innerHTML=
+`<div><span>Hygiene Kits</span><span>${data.inventory.kits}</span></div>`;
+
+document.getElementById("demand").innerHTML=
+`<div><span>Hygiene Kits</span><span>${data.demand.kits}</span></div>`;
+
+document.getElementById("offers").innerHTML=
+data.offers.map(o=>`<div>${o}</div>`).join("");
+
+let net=data.demand.kits-data.inventory.kits;
+document.getElementById("net").innerText="Net Need: "+net;
+
+document.getElementById("usage").innerText=data.usage+"% used";
+document.getElementById("fill").style.width=data.usage+"%";
+}
+
+function log(msg){
+let time=new Date().toLocaleTimeString();
+document.getElementById("log").innerHTML+=`<div>${time} - ${msg}</div>`;
+}
+
+function analyze(){
+let text=document.getElementById("input").value;
+data.offers.push(text);
+log("Offer received: "+text);
+render();
+}
+
+function approve(){log("Approved")}
+function redirect(){log("Redirected")}
+function decline(){log("Declined")}
+
+render();
+</script>
+
+</body>
+</html>
